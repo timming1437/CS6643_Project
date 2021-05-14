@@ -44,7 +44,21 @@ def segmented_intersections(lines):
 
     return intersections
 
-img = cv2.imread('../img/2.jpeg')
+def clust(intersections):
+    result = []
+    for point in intersections:
+        if (len(result)==0):
+            result.append(point)
+            continue
+        flag = True
+        for p in result:
+            if (pow(p[0][0]-point[0][0],2)+pow(p[0][1]-point[0][1],2)<50):
+                flag = False
+        if (flag):
+            result.append(point)
+    return result
+
+img = cv2.imread('../img/4.jpeg')
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 blur = cv2.GaussianBlur(gray, (3,3),0)
 cv2.imwrite('../result/gray_blur.png', blur)
@@ -67,7 +81,8 @@ cv2.imwrite('../result/hough.png',img)
 
 segmented = segment_by_angle_kmeans(lines)
 intersections = segmented_intersections(segmented)
-for point in intersections:
+pts = clust(intersections)
+for point in pts:
     cv2.circle(img,tuple(point[0]),2,(255,255,0))
 
 cv2.imwrite('../result/intersection.png',img)
