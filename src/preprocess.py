@@ -145,11 +145,18 @@ def prepare_img(img_file, img_size = (224,224)):
 
   return tensor
 
+def atoi(text):
+    return int(text) if text.isdigit() else text
+
+def natural_keys(text):
+    return [atoi(c) for c in re.split('(\d+)', text)]
+
 def classification(model, img_folder):
   ## get the paths to images of the chess pieces
   img_files = []
   for f in glob.glob(img_folder):
     img_files.append(f)
+  img_files.sort(key = natural_keys)
   
   labels = ['b', 'k', 'n', 'p', 'q', 'r', '1', 'B', 'K', 'N', 'P', 'Q', 'R']
   results = []
@@ -188,9 +195,3 @@ def draw_board(fen_notation, file_name, output_folder):
   renderPM.drawToFile(output_svg, output_folder + file_name + '.png', fmt = 'PNG')
 
   print("board file created.")
-
-def atoi(text):
-    return int(text) if text.isdigit() else text
-
-def natural_keys(text):
-    return [atoi(c) for c in re.split('(\d+)', text)]
